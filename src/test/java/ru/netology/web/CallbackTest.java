@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CallbackTest {
     private WebDriver driver;
     @BeforeAll
-    static void setUpAll() {
-        System.setProperty("webdriver.chrome.driver", "driver/mac/chromedriver");
+    static void setupAll() {
+        WebDriverManager.chromedriver().setup();
     }
     @BeforeEach
     void SetUp(){
