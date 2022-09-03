@@ -71,20 +71,34 @@ class CallbackTest {
         assertEquals(expected, actual);
     }
 
+    @ParameterizedTest
+    @CsvFileSource(resources = "/negativeTestsPhone.csv")
+    void NegativeTestsPhone(String testName, String phoneNumber) {
+        driver.get("http://localhost:9999");
+        List<WebElement> inputs = driver.findElements(By.className("input__control"));
+        List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
+
+        inputs.get(0).sendKeys("Мария Бычкова");
+        inputs.get(1).sendKeys(phoneNumber);
+        driver.findElement(By.className("checkbox__box")).click(); //agreement
+        driver.findElement(By.tagName("button")).click(); //submit
+        String actual = inputSubs.get(1).getText(); //warning text
+        String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
+        assertEquals(expected, actual);
+    }
 
     @Test
-    public void Test1(){
+    public void EmptyName(){
         driver.get("http://localhost:9999");
-
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
+        List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
 
-        inputs.get(0).sendKeys("Михаил");
+        inputs.get(0).sendKeys("");
         inputs.get(1).sendKeys("+79291104279");
         driver.findElement(By.className("checkbox__box")).click(); //agreement
         driver.findElement(By.tagName("button")).click(); //submit
-        String actual = driver.findElement(By.className("paragraph")).getText(); //success text
-        //String actuale = driver.findElement(By.()).getText(); //success text
-        String expected = "  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
+        String actual = inputSubs.get(0).getText(); //warning text
+        String expected = "Поле обязательно для заполнения";
 
         assertEquals(expected, actual);
     }
