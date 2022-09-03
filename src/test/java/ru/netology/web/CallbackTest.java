@@ -56,17 +56,18 @@ class CallbackTest {
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "/positiveTests.csv")
+    @CsvFileSource(resources = "/negativeTestsName.csv")
     void NegativeTestsName(String testName, String name) {
         driver.get("http://localhost:9999");
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
+        List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
 
         inputs.get(0).sendKeys(name);
         inputs.get(1).sendKeys("+79291104279");
         driver.findElement(By.className("checkbox__box")).click(); //agreement
         driver.findElement(By.tagName("button")).click(); //submit
-        String actual = driver.findElement(By.className("paragraph")).getText(); //success text
-        String expected = "  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
+        String actual = inputSubs.get(0).getText(); //warning text
+        String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
         assertEquals(expected, actual);
     }
 
