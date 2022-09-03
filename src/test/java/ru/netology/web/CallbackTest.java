@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -39,7 +38,6 @@ class CallbackTest {
         driver.quit();
         driver = null;
     }
-
     @ParameterizedTest
     @CsvFileSource(resources = "/positiveTests.csv")
     void PositiveTests(String testName, String name) {
@@ -54,7 +52,6 @@ class CallbackTest {
         String expected = "  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
         assertEquals(expected, actual);
     }
-
     @ParameterizedTest
     @CsvFileSource(resources = "/negativeTestsName.csv")
     void NegativeTestsName(String testName, String name) {
@@ -70,7 +67,6 @@ class CallbackTest {
         String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
         assertEquals(expected, actual);
     }
-
     @ParameterizedTest
     @CsvFileSource(resources = "/negativeTestsPhone.csv")
     void NegativeTestsPhone(String testName, String phoneNumber) {
@@ -86,7 +82,6 @@ class CallbackTest {
         String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
         assertEquals(expected, actual);
     }
-
     @Test
     public void EmptyName(){
         driver.get("http://localhost:9999");
@@ -102,22 +97,29 @@ class CallbackTest {
 
         assertEquals(expected, actual);
     }
-
     @Test
-    public void Test2(){
+    public void EmptyPhone(){
         driver.get("http://localhost:9999");
-
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
+        List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
 
-        inputs.get(0).sendKeys("Михаил");
-        inputs.get(1).sendKeys("+79291104279");
-        //driver.findElement(By.className("checkbox__box")).click(); //agreement
+        inputs.get(0).sendKeys("Мария Бычкова");
+        inputs.get(1).sendKeys("");
+        driver.findElement(By.className("checkbox__box")).click(); //agreement
         driver.findElement(By.tagName("button")).click(); //submit
-        //String actual = driver.findElement(By.className("paragraph")).getText(); //success text
-        //String actuale = driver.findElement(By.()).getText(); //success text
-        //String expected = "  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
+        String actual = inputSubs.get(1).getText(); //warning text
+        String expected = "Поле обязательно для заполнения";
+
+        assertEquals(expected, actual);
+    }
+    @Test
+    public void EmptyCheckbox(){
+        driver.get("http://localhost:9999");
+        List<WebElement> inputs = driver.findElements(By.className("input__control"));
+        inputs.get(0).sendKeys("Михаил Иванов");
+        inputs.get(1).sendKeys("+79291104279");
+        driver.findElement(By.tagName("button")).click();
 
         assertTrue(driver.findElement(By.cssSelector("label.input_invalid")).isDisplayed());
     }
-
 }
