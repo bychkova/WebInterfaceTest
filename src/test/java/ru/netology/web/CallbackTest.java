@@ -26,7 +26,7 @@ class CallbackTest {
         WebDriverManager.chromedriver().setup();
     }
     @BeforeEach
-    void SetUp(){
+    void setUp(){
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
@@ -34,33 +34,36 @@ class CallbackTest {
         driver = new ChromeDriver(options);
     }
     @AfterEach
-    public void Close(){
+    public void close(){
         driver.quit();
         driver = null;
     }
     @ParameterizedTest
     @CsvFileSource(resources = "/positiveTests.csv")
-    void PositiveTests(String testName, String name) {
+    void shouldTestPositiveValues(String testName, String name) {
         driver.get("http://localhost:9999");
-        List<WebElement> inputs = driver.findElements(By.className("input__control"));
 
-        inputs.get(0).sendKeys(name);
-        inputs.get(1).sendKeys("+79291104279");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys(name);
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79291104279");
         driver.findElement(By.className("checkbox__box")).click(); //agreement
         driver.findElement(By.tagName("button")).click(); //submit
-        String actual = driver.findElement(By.className("paragraph")).getText(); //success text
+
+        //String actual = driver.findElement(By.cssSelector("[data-test-id='order-success'] paragraph")).getText(); //success text
+
+        String actual = driver.findElement(By.className("paragraph")).getText();
         String expected = "  Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
+
         assertEquals(expected, actual);
     }
     @ParameterizedTest
     @CsvFileSource(resources = "/negativeTestsName.csv")
-    void NegativeTestsName(String testName, String name) {
+    void shouldTestNegativeValuesForName(String testName, String name) {
         driver.get("http://localhost:9999");
-        List<WebElement> inputs = driver.findElements(By.className("input__control"));
+        //List<WebElement> inputs = driver.findElements(By.className("input__control"));
         List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
 
-        inputs.get(0).sendKeys(name);
-        inputs.get(1).sendKeys("+79291104279");
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys(name);
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("79291104279");
         driver.findElement(By.className("checkbox__box")).click(); //agreement
         driver.findElement(By.tagName("button")).click(); //submit
         String actual = inputSubs.get(0).getText(); //warning text
@@ -69,7 +72,7 @@ class CallbackTest {
     }
     @ParameterizedTest
     @CsvFileSource(resources = "/negativeTestsPhone.csv")
-    void NegativeTestsPhone(String testName, String phoneNumber) {
+    void shouldTestNegativeValuesForPhone(String testName, String phoneNumber) {
         driver.get("http://localhost:9999");
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
         List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
@@ -83,7 +86,7 @@ class CallbackTest {
         assertEquals(expected, actual);
     }
     @Test
-    public void EmptyName(){
+    public void shouldTestEmptyName(){
         driver.get("http://localhost:9999");
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
         List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
@@ -98,7 +101,7 @@ class CallbackTest {
         assertEquals(expected, actual);
     }
     @Test
-    public void EmptyPhone(){
+    public void shouldTestEmptyPhone(){
         driver.get("http://localhost:9999");
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
         List<WebElement> inputSubs = driver.findElements(By.className("input__sub"));
@@ -113,7 +116,7 @@ class CallbackTest {
         assertEquals(expected, actual);
     }
     @Test
-    public void EmptyCheckbox(){
+    public void shouldTestEmptyCheckbox(){
         driver.get("http://localhost:9999");
         List<WebElement> inputs = driver.findElements(By.className("input__control"));
         inputs.get(0).sendKeys("Михаил Иванов");
